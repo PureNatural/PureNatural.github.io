@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Paddle on YuRonan Blog</title>
+    <link>https://purenatural.github.io/tags/paddle/</link>
+    <description>Recent content in Paddle on YuRonan Blog</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Thu, 22 Dec 2022 00:00:00 +0000</lastBuildDate><atom:link href="https://purenatural.github.io/tags/paddle/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>开发者经验分享！手把手教你为飞桨贡献Gumbel API</title>
+      <link>https://purenatural.github.io/2022/12/22/paddle-gumbel-api/</link>
+      <pubDate>Thu, 22 Dec 2022 00:00:00 +0000</pubDate>
+      
+      <guid>https://purenatural.github.io/2022/12/22/paddle-gumbel-api/</guid>
+      <description>任务介绍 耿贝尔（Gumbel）分布是一种极值型分布。Gumbel分布理论认为，最大值分布的潜在适用性与极值理论有关，如果基础样本数据的分布是</description>
+    </item>
+    
+  </channel>
+</rss>
