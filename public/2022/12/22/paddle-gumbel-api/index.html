@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    
+    <meta property="og:site_name" content="YuRonan Blog">
+    <meta property="og:type" content="article">
+
+    
+    <meta property="og:image" content="/img/paddle-header.png">
+    <meta property="twitter:image" content="/img/paddle-header.png" />
+    
+
+    
+    <meta name="title" content="开发者经验分享！手把手教你为飞桨贡献Gumbel API" />
+    <meta property="og:title" content="开发者经验分享！手把手教你为飞桨贡献Gumbel API" />
+    <meta property="twitter:title" content="开发者经验分享！手把手教你为飞桨贡献Gumbel API" />
+    
+
+    
+    <meta name="description" content="YuRonan，开源爱好者，爱音乐，爱电影">
+    <meta property="og:description" content="YuRonan，开源爱好者，爱音乐，爱电影" />
+    <meta property="twitter:description" content="YuRonan，开源爱好者，爱音乐，爱电影" />
+    
+
+    
+    <meta property="twitter:card" content="summary" />
+    
+    
+
+    <meta name="keyword"  content="YuRonan, 开源爱好者">
+    <link rel="shortcut icon" href="/img/favicon.ico">
+
+    <title>开发者经验分享！手把手教你为飞桨贡献Gumbel API | YuRonan的博客 | YuRonan Blog</title>
+
+    <link rel="canonical" href="/2022/12/22/paddle-gumbel-api/">
+
+    
+    
+    
+    <link rel="stylesheet" href="/css/bootstrap.min.css">
+
+    
+    <link rel="stylesheet" href="/css/hugo-theme-cleanwhite.min.css">
+
+    
+    <link rel="stylesheet" href="/css/zanshang.css">
+
+    
+    <link rel="stylesheet" href="/css/font-awesome.all.min.css">
+
+    
+    
+
+    
+    <script src="/js/jquery.min.js"></script>
+
+    
+    <script src="/js/bootstrap.min.js"></script>
+
+    
+    <script src="/js/hux-blog.min.js"></script>
+
+    
+    <script src="/js/lazysizes.min.js"></script>
+
+    
+    
+
+</head>
+
+
+
+
+
+
+<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+
+    <div class="container-fluid">
+        
+        <div class="navbar-header page-scroll">
+            <button type="button" class="navbar-toggle">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/">YuRonan Blog</a>
+        </div>
+
+        
+        
+        <div id="huxblog_navbar">
+            <div class="navbar-collapse">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="/">All Posts</a>
+                    </li>
+                    
+                        
+                        <li>
+                            <a href="/categories/movie/">movie</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/music/">music</a>
+                        </li>
+                        
+                        <li>
+                            <a href="/categories/tech/">tech</a>
+                        </li>
+                        
+                    
+                    
+		    
+                        <li><a href="/archive//">ARCHIVE</a></li>
+                    
+                        <li><a href="/about//">ABOUT</a></li>
+                    
+		            <li>
+                        <a href="/search"><i class="fa fa-search"></i></a>
+		           </li>
+                </ul>
+            </div>
+        </div>
+        
+    </div>
+    
+</nav>
+<script>
+    
+    
+    
+    var $body   = document.body;
+    var $toggle = document.querySelector('.navbar-toggle');
+    var $navbar = document.querySelector('#huxblog_navbar');
+    var $collapse = document.querySelector('.navbar-collapse');
+
+    $toggle.addEventListener('click', handleMagic)
+    function handleMagic(e){
+        if ($navbar.className.indexOf('in') > 0) {
+        
+            $navbar.className = " ";
+            
+            setTimeout(function(){
+                
+                if($navbar.className.indexOf('in') < 0) {
+                    $collapse.style.height = "0px"
+                }
+            },400)
+        }else{
+        
+            $collapse.style.height = "auto"
+            $navbar.className += " in";
+        }
+    }
+</script>
+
+
+
+
+<style type="text/css">
+    header.intro-header {
+        background-image: url('/img/paddle-header.png')
+    }
+</style>
+
+<header class="intro-header" >
+
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <div class="post-heading">
+                    <div class="tags">
+                        
+                        <a class="tag" href="/tags/paddle" title="Paddle">
+                            Paddle
+                        </a>
+                        
+                    </div>
+                    <h1>开发者经验分享！手把手教你为飞桨贡献Gumbel API</h1>
+                    <h2 class="subheading">开发经验分享</h2>
+                    <span class="meta">
+                        
+                            Posted by 
+                            
+                                    &#34;YuRonan&#34;
+                             
+                            on 
+                            Thursday, December 22, 2022
+                            
+                            
+                            
+                            
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+
+
+
+
+<article>
+    <div class="container">
+        <div class="row">
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                post-container">
+
+                
+                <h2 id="任务介绍">任务介绍</h2>
+<p>耿贝尔（Gumbel）分布是一种极值型分布。Gumbel分布理论认为，最大值分布的潜在适用性与极值理论有关，如果基础样本数据的分布是正态或者指数类型，Gumbel分布就是有用的。Gumbel分布适用于海洋、水文、气象领域，用来计算不同重现期的极端高(低)潮位。而在概率论和统计学中，Gumbel分布常被用来模拟不同分布的样本的最大(或最小)分布。</p>
+<p>
+  <img src="/img/paddle/gumbel-prob.png" alt="Gateway">
+
+</p>
+<p>飞桨框架目前还未集成Gumbel分布，本任务的目标是对飞桨框架中现有概率分布方案进行扩展，新增Gumbel API。增加此API能够扩大飞桨的应用处理范围，对飞桨来说是非常必要的。</p>
+<h2 id="设计思路">设计思路</h2>
+<p>Gumbel API的设计需要做多个方面的知识储备：</p>
+<ul>
+<li>详细了解Gumbel分布背后的数学原理以及应用场景；（Controller）也可以在模型指定。</li>
+<li>深刻了解飞桨和业界概率分布设计实现的方法和技巧。</li>
+</ul>
+<blockquote>
+<p>注：“充分学习Gumbel背后的数学原理”这一点很重要，避免在开发时违背定理。印象最深的是在开发之初，我们没有了解到分布的mean如何计算，直接使用了一个不清楚的计算方式，导致在最开始的版本中，mean的计算方式错误。最后，通过查询资料得知标准Gumbel分布的mean为负欧拉常数，于是纠正。</p>
+</blockquote>
+<p>接下来，我将详细描述Gumbel API的设计思路。</p>
+<ul>
+<li>命名与参数设计</li>
+</ul>
+<p>API的名称直接使用Gumbel分布的名称，参数保持Gumbel分布最原生的参数，包括“位置参数loc”以及“尺度参数scale”。预期Gumbel API的形式为：</p>
+<p>paddle.distribution.gumbel.Gumbel ( loc, scale )</p>
+<ul>
+<li>Gumbel分布类的初始化方法</li>
+</ul>
+<p>类初始化过程中，一方面要严格控制参数loc和scale的形状和数据类型。另一方面还要借助基础分布Uniform以及transforms初始化父类 TransformedDistribution。</p>
+<ul>
+<li>Gumbel API的功能</li>
+</ul>
+<p>该API部分功能继承于TransformedDistribution，包括mean均值、variance方差、sample随机采样、rsample重参数化采样、prob概率密度、log_prob对数概率密度、entropy熵计算等。除了官方任务要求外，我们还添加了一些其他的方法，比如stddev标准差和cdf累积分布函数等。</p>
+<h2 id="类初始化方法">类初始化方法</h2>
+<h3 id="数据类型">数据类型</h3>
+<p>首先我们需要判断loc和scale的数据类型是否是飞桨支持的标量数据类型。如果是飞桨支持的标量，需要将其转为飞桨支持的tensor类型。</p>
+<ul>
+<li>上述判断实现如下：</li>
+</ul>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">if</span>     
+      <span style="color:#ff79c6">not</span> <span style="color:#8be9fd;font-style:italic">isinstance</span>(loc, (numbers<span style="color:#ff79c6">.</span>Real, framework<span style="color:#ff79c6">.</span>Variable)):    
+      
+    （抛出数据类型错误）    
+      
+    
+      <span style="color:#ff79c6">if</span>     
+      <span style="color:#ff79c6">not</span> <span style="color:#8be9fd;font-style:italic">isinstance</span>(scale, (numbers<span style="color:#ff79c6">.</span>Real, framework<span style="color:#ff79c6">.</span>Variable)):    
+      
+    （抛出数据类型错误）    
+      
+    
+      <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">isinstance</span>(loc, numbers<span style="color:#ff79c6">.</span>Real):    
+      
+    （转为 paddle 类型的 tensor）    
+      
+    
+      <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">isinstance</span>(scale, numbers<span style="color:#ff79c6">.</span>Real):    
+      
+    （转为 paddle 类型的 tensor）   
+</code></pre></div><p>此外，还要统一loc和scale的形状类型，我们选择使用paddle.broadcast_tensors() 广播机制来进行统一。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">
+<span style="color:#ff79c6">if</span> loc<span style="color:#ff79c6">.</span>shape <span style="color:#ff79c6">!=</span> scale<span style="color:#ff79c6">.</span>shape:    
+      
+            
+      self<span style="color:#ff79c6">.</span>loc,     
+      self<span style="color:#ff79c6">.</span>scale <span style="color:#ff79c6">=</span> paddle<span style="color:#ff79c6">.</span>broadcast_tensors([loc, scale])    
+      
+    
+      <span style="color:#ff79c6">else</span>:    
+      
+            
+      self<span style="color:#ff79c6">.</span>loc,     
+      self<span style="color:#ff79c6">.</span>scale <span style="color:#ff79c6">=</span> loc, scale   
+
+</code></pre></div><h3 id="父类调用">父类调用</h3>
+<p>代码开发
+本节介绍代码开发的过程，着重介绍在开发中遇到困难的两个部分，包括类初始化方法（<strong>init</strong>）和重参数化采样方法（rsample）。最后，再介绍开发过程中遇到的问题以及如何解决该问题。</p>
+<h2 id="代码开发">代码开发</h2>
+<p>在经过以上准备，确定设计思路后，我们给出 paddle.distribution.gumbel.Gumbel中实现的属性、方法的伪代码。</p>
+<h3 id="类初始化方法__init__">类初始化方法：<strong>init</strong></h3>
+<p>在进行此方法的开发中，我们着重关注两个方面：</p>
+<ul>
+<li>
+<p>参数（loc, scale）的形状，数据类型的判断；</p>
+</li>
+<li>
+<p>使用基础分布Uniform以及transforms调用父类TransformedDistribution。</p>
+</li>
+</ul>
+<p>最终__init__方法如下 ：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">def</span> __init__(self, loc, scale):    
+      
+        
+      <span style="color:#ff79c6">if</span>     
+      <span style="color:#ff79c6">not</span> <span style="color:#8be9fd;font-style:italic">isinstance</span>(loc, (numbers<span style="color:#ff79c6">.</span>Real, framework<span style="color:#ff79c6">.</span>Variable)):    
+      
+        <span style="color:#ff79c6">raise</span> TypeError(    
+      
+            f    
+      <span style="color:#f1fa8c">&#34;Expected type of loc is Real|Variable, but got {type(loc)}&#34;</span>)    
+      
+        
+      <span style="color:#ff79c6">if</span>     
+      <span style="color:#ff79c6">not</span> <span style="color:#8be9fd;font-style:italic">isinstance</span>(scale, (numbers<span style="color:#ff79c6">.</span>Real, framework<span style="color:#ff79c6">.</span>Variable)):    
+      
+        <span style="color:#ff79c6">raise</span> TypeError(    
+      
+            f    
+      <span style="color:#f1fa8c">&#34;Expected type of scale is Real|Variable, but got {type(scale)}&#34;</span>
+        )    
+      
+        
+      <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">isinstance</span>(loc, numbers<span style="color:#ff79c6">.</span>Real):    
+      
+        loc <span style="color:#ff79c6">=</span> paddle<span style="color:#ff79c6">.</span>full(shape<span style="color:#ff79c6">=</span>(), fill_value<span style="color:#ff79c6">=</span>loc)    
+      
+        
+      <span style="color:#ff79c6">if</span> <span style="color:#8be9fd;font-style:italic">isinstance</span>(scale, numbers<span style="color:#ff79c6">.</span>Real):    
+      
+        scale <span style="color:#ff79c6">=</span> paddle<span style="color:#ff79c6">.</span>full(shape<span style="color:#ff79c6">=</span>(), fill_value<span style="color:#ff79c6">=</span>scale)    
+      
+        
+      <span style="color:#ff79c6">if</span> loc<span style="color:#ff79c6">.</span>shape <span style="color:#ff79c6">!=</span> scale<span style="color:#ff79c6">.</span>    
+      shape:
+            
+      self<span style="color:#ff79c6">.</span>loc,     
+      self<span style="color:#ff79c6">.</span>scale <span style="color:#ff79c6">=</span> paddle<span style="color:#ff79c6">.</span>broadcast_tensors([loc, scale])    
+      
+        
+      <span style="color:#ff79c6">else</span>:
+            
+      self<span style="color:#ff79c6">.</span>loc,     
+      self<span style="color:#ff79c6">.</span>scale <span style="color:#ff79c6">=</span> loc, scale    
+      
+    finfo <span style="color:#ff79c6">=</span> np<span style="color:#ff79c6">.</span>finfo(dtype<span style="color:#ff79c6">=</span>    
+      <span style="color:#f1fa8c">&#39;float32&#39;</span>)    
+      
+        
+      self<span style="color:#ff79c6">.</span>base_dist <span style="color:#ff79c6">=</span> paddle<span style="color:#ff79c6">.</span>distribution<span style="color:#ff79c6">.</span>Uniform(    
+      
+        paddle<span style="color:#ff79c6">.</span>full_like(    
+      self<span style="color:#ff79c6">.</span>loc, <span style="color:#8be9fd;font-style:italic">float</span>(finfo<span style="color:#ff79c6">.</span>tiny)),    
+      
+        paddle<span style="color:#ff79c6">.</span>full_like(    
+      self<span style="color:#ff79c6">.</span>loc, <span style="color:#8be9fd;font-style:italic">float</span>(    
+      <span style="color:#bd93f9">1</span> <span style="color:#ff79c6">-</span> finfo<span style="color:#ff79c6">.</span>eps)))    
+      
+        
+      self<span style="color:#ff79c6">.</span>transforms <span style="color:#ff79c6">=</span> ()    
+      
+        
+      <span style="color:#8be9fd;font-style:italic">super</span>(Gumbel,     
+      self)<span style="color:#ff79c6">.</span>__init_    
+      _(    
+      self<span style="color:#ff79c6">.</span>base_dist,     
+      self<span style="color:#ff79c6">.</span>transforms)   
+</code></pre></div><h3 id="重参数化采样rsample">重参数化采样：rsample</h3>
+<p>由于我们对rsample的概念模糊，在开发此部分时非常困难。在查阅资料后得知rsample的真正用途是重参数化技巧，即从一个分布中进行采样。而该分布是带有参数的，如果直接进行采样（采样动作是离散的，其不可微），没有梯度信息，那么在反向传播的时候就不会对参数梯度进行更新。重参数化技巧可以保证我们从分布中进行采样，同时又能保留梯度信息。
+在梳理清楚rsample的含义后，我们参考了业界的写法，使用了两个transform。
+即paddle.distribution.AffineTransform和 paddle.distribution.AffineTransform，最终代码如下：</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python"><span style="color:#ff79c6">def</span> <span style="color:#50fa7b">rsample</span>(self, shape):    
+      
+    exp_trans <span style="color:#ff79c6">=</span> paddle<span style="color:#ff79c6">.</span>distribution<span style="color:#ff79c6">.</span>ExpTransform()    
+      
+    affine_trans_1 <span style="color:#ff79c6">=</span> paddle<span style="color:#ff79c6">.</span>distribution<span style="color:#ff79c6">.</span>AffineTransform(    
+      
+        paddle<span style="color:#ff79c6">.</span>full(shape<span style="color:#ff79c6">=</span>    
+      self<span style="color:#ff79c6">.</span>scale<span style="color:#ff79c6">.</span>shape,    
+      
+                    fill_value<span style="color:#ff79c6">=</span>    
+      <span style="color:#bd93f9">0</span>,    
+      
+                    dtype<span style="color:#ff79c6">=</span>    
+      self<span style="color:#ff79c6">.</span>loc<span style="color:#ff79c6">.</span>dtype), <span style="color:#ff79c6">-</span>paddle<span style="color:#ff79c6">.</span>ones_like(    
+      self<span style="color:#ff79c6">.</span>scale))    
+      
+    affine_trans_2 <span style="color:#ff79c6">=</span> paddle<span style="color:#ff79c6">.</span>distribution<span style="color:#ff79c6">.</span>AffineTransform(    
+      
+            
+      self<span style="color:#ff79c6">.</span>loc, <span style="color:#ff79c6">-</span>    
+      self<span style="color:#ff79c6">.</span>scale)    
+      
+        
+      <span style="color:#ff79c6">return</span> affine_trans_2<span style="color:#ff79c6">.</span>forward(    
+      
+        exp_trans<span style="color:#ff79c6">.</span>inverse(    
+      
+            affine_trans_1<span style="color:#ff79c6">.</span>forward(    
+      
+                exp_trans<span style="color:#ff79c6">.</span>inverse(    
+      self<span style="color:#ff79c6">.</span>_base<span style="color:#ff79c6">.</span>sample(shape)))))   
+     
+</code></pre></div><h2 id="其他属性方法实现">其他属性、方法实现</h2>
+<p>详细实现可以参考 Paddle/python/paddle/distribution/gumbel.py。</p>
+<h2 id="问题以及解决方法">问题以及解决方法</h2>
+<p>在开发Gumbel API时，遇到了一些问题。</p>
+<ul>
+<li>多次使用仅支持动态图的tensor，最终使用paddle.full替代。</li>
+<li>无法在初始化方法中将多个transforms作用到基础分布Uniform上。最终 选择在rsample方法中直接将多个transforms作用到Uniform上。</li>
+<li>测试类中，使用Numpy实现方法的数据类型和飞桨数据类型没有统一。</li>
+</ul>
+<p>最开始的解决办法是在各个测试方法里面将Numpy的数据类型转换成飞桨支持的数据类型，但是官方评审人员给出了一种更方便的解决办法：不增加类型转换逻辑，用xrand指定dtype。</p>
+<h2 id="成果展示">成果展示</h2>
+<p>导入及初始化Gumbel类</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">      <span style="color:#ff79c6">import</span> paddle    
+      
+       
+      <span style="color:#ff79c6">from</span> paddle.distribution.gumbel     
+      <span style="color:#ff79c6">import</span> Gumbel       
+      
+   loc <span style="color:#ff79c6">=</span> paddle<span style="color:#ff79c6">.</span>full([    
+      <span style="color:#bd93f9">1</span>],     
+      <span style="color:#bd93f9">0.0</span>)    
+      
+    scale <span style="color:#ff79c6">=</span> paddle<span style="color:#ff79c6">.</span>full([    
+      <span style="color:#bd93f9">1</span>],     
+      <span style="color:#bd93f9">1.0</span>)    
+      
+    dist <span style="color:#ff79c6">=</span> Gumbel(loc,  scale)   
+</code></pre></div><p>使用rsample(shape) / sample(shape)进行随机采样/重参数化采样，需要指定采样的shape。</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#282a36;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-python" data-lang="python">             shape <span style="color:#ff79c6">=</span> [    
+      <span style="color:#bd93f9">2</span>]    
+      
+    dist<span style="color:#ff79c6">.</span>sample(shape)    
+      
+    <span style="color:#6272a4"># Tensor(shape=[    </span>
+      <span style="color:#bd93f9">2</span>,     
+      <span style="color:#bd93f9">1</span>], dtype<span style="color:#ff79c6">=</span>float32, place<span style="color:#ff79c6">=</span>Place(gpu:    
+      <span style="color:#bd93f9">0</span>), stop_gradient<span style="color:#ff79c6">=</span><span style="color:#ff79c6">True</span>,     
+      [[<span style="color:#ff79c6">-</span><span style="color:#bd93f9">0.27544352</span>], [<span style="color:#ff79c6">-</span><span style="color:#bd93f9">0.64499271</span>]])    
+      
+   dist<span style="color:#ff79c6">.</span>rsample(shape)    
+      
+    <span style="color:#6272a4"># Tensor(shape=[    </span>
+      <span style="color:#bd93f9">2</span>,     
+      <span style="color:#bd93f9">1</span>], dtype<span style="color:#ff79c6">=</span>float32, place<span style="color:#ff79c6">=</span>Place(gpu:    
+      <span style="color:#bd93f9">0</span>), stop_gradient<span style="color:#ff79c6">=</span><span style="color:#ff79c6">True</span>,     
+      [[<span style="color:#bd93f9">0.80463481</span>], [<span style="color:#bd93f9">0.91893655</span>]])    
+</code></pre></div><h2 id="总结">总结</h2>
+<p>本篇项目介绍了我们小组开发Gumbel API的历程。从学习飞桨以及业界相关内容、到设计提案，最后到API的开发、测试。这期间，我们学习到很多内容，比如：</p>
+<ul>
+<li>
+<p>如何使用GitHub进行代码协作开发；</p>
+</li>
+<li>
+<p>更加熟悉国内顶尖的飞桨深度学习框架；</p>
+</li>
+<li>
+<p>深刻掌握了包括Gumbel分布在内的多个数学分布；</p>
+</li>
+<li>
+<p>锻炼了使用Python开发的能力。</p>
+</li>
+</ul>
+<p>当然，Gumbel API还存在着一些缺点和不足，后续需要不断改进：</p>
+<ul>
+<li>
+<p>rsample方法中使用多个transforms，操作繁琐；</p>
+</li>
+<li>
+<p>测试方法时，随机采样和重参数化采样的精度未能降低到1e-3以下。未来将尝试使用其他方式来实现属性方法，从而降低采样精度；</p>
+</li>
+<li>
+<p>API的__init__方法存在优化的余地，未来可以将rsample中的transforms整合到初始化方法中；</p>
+</li>
+<li>
+<p>未能实现InverseTransform；</p>
+</li>
+<li>
+<p>未能将多个参数的验证抽取出来，使用特定的参数验证方法进行验证，比如 _validate_value(value)；</p>
+</li>
+<li>
+<p>未来可以尝试增加kl_divergence计算两个Gumbel分布的差异。</p>
+</li>
+</ul>
+<p>以上就是整个API开发的过程，虽然充满挑战，但是不断解决问题才是关键，很高兴能为飞桨框架做出一份贡献，也很高兴能有这个机会在这里给各位分享开发过程。</p>
+
+
+                
+
+                
+                <hr>
+                <ul class="pager">
+                    
+                    <li class="previous">
+                        <a href="/2019/04/24/avengers-movie/" data-toggle="tooltip" data-placement="top" title="最好的复联，最好的漫威">&larr;
+                            Previous Post</a>
+                    </li>
+                    
+                    
+                    <li class="next">
+                        <a href="/2023/04/26/dataease/" data-toggle="tooltip" data-placement="top" title="DataEase-一个非常好用的大屏制作工具">Next
+                            Post &rarr;</a>
+                    </li>
+                    
+                </ul>
+                
+
+                
+
+
+
+            </div>
+
+            
+            
+            <div class="
+                col-lg-2 col-lg-offset-0
+                visible-lg-block
+                sidebar-container
+                catalog-container">
+                <div class="side-catalog">
+                    <hr class="hidden-sm hidden-xs">
+                    <h5>
+                        <a class="catalog-toggle" href="#">CATALOG</a>
+                    </h5>
+                    <ul class="catalog-body"></ul>
+                </div>
+            </div>
+            
+
+            
+            <div class="
+                col-lg-8 col-lg-offset-2
+                col-md-10 col-md-offset-1
+                sidebar-container">
+
+                
+                
+                <section>
+                    <hr class="hidden-sm hidden-xs">
+                    <h5><a href="/tags/">FEATURED TAGS</a></h5>
+                    <div class="tags">
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        <a href="/tags/movie" title="movie">
+                            movie
+                        </a>
+                        
+                        
+                        
+                        
+                        
+                        
+                    </div>
+                </section>
+                
+
+                
+                
+                <section>
+                    <hr>
+                    <h5>FRIENDS</h5>
+                    <ul class="list-inline">
+                        
+                        <li><a target="_blank" href="https://wj23027.github.io">wj的博客</a></li>
+                        
+                    </ul>
+                </section>
+                
+            </div>
+        </div>
+    </div>
+</article>
+
+
+
+
+<footer>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1">
+                <ul class="list-inline text-center">                  
+                    
+                    <li>
+                        <a href="mailto:471254751@qq.com">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fas fa-envelope fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		           
+                    
+                    
+                    
+                    
+
+		            
+                    
+                    
+                    <li>
+                        <a target="_blank" href="https://github.com/purenatural">
+                            <span class="fa-stack fa-lg">
+                                <i class="fas fa-circle fa-stack-2x"></i>
+                                <i class="fab fa-github fa-stack-1x fa-inverse"></i>
+                            </span>
+                        </a>
+                    </li>
+		            
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+            
+            
+            
+           
+             </ul>
+		<p class="copyright text-muted">
+                    Copyright &copy; YuRonan Blog 2024
+                    
+                </p>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+
+
+<script>
+    function loadAsync(u, c) {
+      var d = document, t = 'script',
+          o = d.createElement(t),
+          s = d.getElementsByTagName(t)[0];
+      o.src = u;
+      if (c) { o.addEventListener('load', function (e) { c(null, e); }, false); }
+      s.parentNode.insertBefore(o, s);
+    }
+</script>
+
+
+
+
+
+
+<script>
+    
+    if($('#tag_cloud').length !== 0){
+        loadAsync("/js/jquery.tagcloud.js",function(){
+            $.fn.tagcloud.defaults = {
+                
+                color: {start: '#bbbbee', end: '#0085a1'},
+            };
+            $('#tag_cloud a').tagcloud();
+        })
+    }
+</script>
+
+
+<script>
+    loadAsync("https://cdn.jsdelivr.net/npm/fastclick@1.0.6/lib/fastclick.min.js", function(){
+        var $nav = document.querySelector("nav");
+        if($nav) FastClick.attach($nav);
+    })
+</script>
+
+
+
+
+
+
+<script type="text/javascript">
+    function generateCatalog(selector) {
+
+        
+        
+        
+        
+            _containerSelector = 'div.post-container'
+        
+
+        
+        var P = $(_containerSelector), a, n, t, l, i, c;
+        a = P.find('h1,h2,h3,h4,h5,h6');
+
+        
+        $(selector).html('')
+
+        
+        a.each(function () {
+            n = $(this).prop('tagName').toLowerCase();
+            i = "#" + $(this).prop('id');
+            t = $(this).text();
+            c = $('<a href="' + i + '" rel="nofollow">' + t + '</a>');
+            l = $('<li class="' + n + '_nav"></li>').append(c);
+            $(selector).append(l);
+        });
+        return true;
+    }
+
+    generateCatalog(".catalog-body");
+
+    
+    $(".catalog-toggle").click((function (e) {
+        e.preventDefault();
+        $('.side-catalog').toggleClass("fold")
+    }))
+
+    
+
+
+    loadAsync("\/js\/jquery.nav.js", function () {
+        $('.catalog-body').onePageNav({
+            currentClass: "active",
+            changeHash: !1,
+            easing: "swing",
+            filter: "",
+            scrollSpeed: 700,
+            scrollOffset: 0,
+            scrollThreshold: .2,
+            begin: null,
+            end: null,
+            scrollChange: null,
+            padding: 80
+        });
+    });
+</script>
+
+
+
+
+
+
+</body>
+</html>

@@ -1,7 +1,7 @@
 ---
 showonlyimage: true
 title:      "开发者经验分享！手把手教你为飞桨贡献Gumbel API"
-subtitle:   开发经验分享"
+subtitle:   开发经验分享
 date:       2022-12-22
 author:     "YuRonan"
 image: "/img/paddle-header.png"
