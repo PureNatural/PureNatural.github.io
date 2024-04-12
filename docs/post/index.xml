@@ -6,7 +6,25 @@
     <description>Recent content in Posts on YuRonan Blog</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 26 Apr 2023 00:00:00 +0000</lastBuildDate><atom:link href="https://purenatural.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 12 Apr 2024 00:00:00 +0000</lastBuildDate><atom:link href="https://purenatural.github.io/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>GitHub&#43;Hugo搭建个人博客经验分享</title>
+      <link>https://purenatural.github.io/2024/04/12/hugo-share/</link>
+      <pubDate>Fri, 12 Apr 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://purenatural.github.io/2024/04/12/hugo-share/</guid>
+      <description>主题选取 在选择主题时，我尽量选择排版较为充实，内容能够铺满屏幕的设计，这样网站显得大气简洁一些，同时也希望能够在移动端做展示，方便网友随时随</description>
+    </item>
+    
+    <item>
+      <title>浅析琵琶武曲《十面埋伏》</title>
+      <link>https://purenatural.github.io/2024/03/23/shimianmaifu/</link>
+      <pubDate>Sat, 23 Mar 2024 00:00:00 +0000</pubDate>
+      
+      <guid>https://purenatural.github.io/2024/03/23/shimianmaifu/</guid>
+      <description>《十面埋伏》的概述与版本比较 公元前202年十月，灌婴带头攻打彭城，征服了楚的许多地区。被任命为淮南国王的刘邦也被派往九江市。他是卫兵和楚司马</description>
+    </item>
+    
     <item>
       <title>DataEase-一个非常好用的大屏制作工具</title>
       <link>https://purenatural.github.io/2023/04/26/dataease/</link>
